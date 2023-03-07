@@ -1,28 +1,40 @@
 import React from "react";
-import { Text, View, TextInput, StatusBar, Platform } from "react-native";
 
-const app = () => {
-  const [text, setValue] = React.useState("#f0f");
+import { View } from "react-native";
+
+export default function App() {
   return (
     <View
       style={{
-        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        backgroundColor: "#fff",
+        flex: 1,
+        justifyContent: "space-evenly",
+        flexDirection: "row",
       }}
     >
-      <TextInput
-        multiline
-        numberOfLines={5}
+      <View
         style={{
-          height: 40,
-          width: 190,
-          borderWidth: 1,
-          backgroundColor: text,
+          backgroundColor: "dodgerblue",
+          width: 100,
+          height: 100,
         }}
-        onChangeText={setValue}
-        value={text}
+      />
+
+      <View
+        style={{
+          backgroundColor: "gold",
+          width: 100,
+          height: 100,
+        }}
+      />
+
+      <View
+        style={{
+          backgroundColor: "tomato",
+          width: 100,
+          height: 100,
+        }}
       />
     </View>
   );
-};
-
-export default app;
+}
