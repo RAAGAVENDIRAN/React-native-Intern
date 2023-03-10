@@ -1,10 +1,22 @@
-import React from 'react'
+import React from "react";
 
-import { TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, TouchableWithoutFeedback } from "react-native";
+import MateralCommunityIcons from "@expo/vector-icons";
+import colors from "../config/colors";
 
-
-function ListingDetailsScreen(props){
-    <TouchableWithoutFeedback onPress={}>
-        <View style={styles.container}></View>
-    </TouchableWithoutFeedback>
+export default function ListItemDeleteAction({}) {
+  <TouchableWithoutFeedback onPress={onPress}>
+    <View style={styles.container}>
+      <MateralCommunityIcons name="trash-can" size={35} color="color.white" />
+    </View>
+  </TouchableWithoutFeedback>;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.danger,
+    width: 70,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
