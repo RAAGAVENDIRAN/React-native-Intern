@@ -1,51 +1,63 @@
-import { statusBar } from "expo-status-bar";
-import React, { useRef, useEffect } from "react";
-import { Animated, Button, StyleSheet, Text, View } from "react-native";
+import React from "react";
+import {
+  NativeModules,
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  LayoutAnimation,
+} from "react-native";
+//Note that in order to get this to work on Android you need to set the following flags via UIManager:
+//UIManager.setLayoutAnimationEnabledExperimental(true);
 
-export default function App() {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+const { UIManager } = NativeModules;
 
-  const fadeIn = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 5000,
-      useNativeDriver: true,
-    }).start();
+UIManager.setLayoutAnimationEnabledExperimental &&
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+
+export default class App extends React.Component {
+  state = {
+    w: 40,
+    h: 40,
   };
 
-  const fadeOut = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 5000,
-      useNativeDriver: true,
-    }).start();
+  makeBigger = () => {
+    //Animate the update
+    LayoutAnimation.spring();
+    this.setState({ w: this.state.w + 15, h: this.state.h + 15 });
   };
-
-  return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.fadingContainer, { opacity: fadeAnim }]}>
-        <Text style={styles.fadingText}>Fading View</Text>
-      </Animated.View>
-      <View>
-        <Button title="Fade in View" onPress={fadeIn} />
-        <Button title="Fade Out View" onPress={fadeOut} />
+  render() {
+    return (
+      <View style={styles.container}>
+        <View
+          style={[styles.box, { width: this.state.w, height: this.state.h }]}
+        />
+        <Button title="Grow Bigger" onPress={this.makeBigger} />
       </View>
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     alignItems: "center",
     justifyContent: "center",
   },
-  fadingText: {
-    fontSize: 28,
+  box: {
+    width: 200,
+    height: 200,
+    backgroundColor: "red",
   },
-  fadingContainer: {
-    padding: 20,
-    backgroundColor: "powderblue",
+  button: {
+    backgroundColor: "black",
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    marginTop: 15,
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
   },
 });
