@@ -1,28 +1,45 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
+import { Button } from "react-native";
 import { Animated, View, StyleSheet, Text, PanResponder } from "react-native";
 
 const App = () => {
-  const pan = useRef(new Animated.ValueXY()).current;
-
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
-      onPanResponderRelease: () => {
-        pan.extractOffset(); //by using extractOffset the box is fixed in the position where we dragged it.
-      },
-    })
-  ).current;
+  const opacity = useRef(new Animated.Value(1)).current;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>Drag this box!</Text>
+      <Animated.View
+        style={[
+          { width: 100, height: 100, backgroundColor: "red" },
+          { opacity: opacity },
+        ]}
+      />
+      <Button
+        title="Press Me"
+        onPress={() => {
+          Animated.timing(opacity, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: false,
+          }).start();
+        }}
+      />
+      <Button
+        title="Press Me"
+        onPress={() => {
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }).start();
+        }}
+      />
+      {/* <Text style={styles.titleText}>Drag & Release this box!</Text>
       <Animated.View
         style={{ transform: [{ translateX: pan.x }, { translateY: pan.y }] }}
         {...panResponder.panHandlers}
       >
         <View style={styles.box} />
-      </Animated.View>
+      </Animated.View> */}
     </View>
   );
 };
