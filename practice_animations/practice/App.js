@@ -11,27 +11,42 @@ import {
 
 export default class animations extends Component {
   state = {
-    animation: new Animated.Value(0),
+    colorAnimation: new Animated.Value(0),
+    scaleAnimation: new Animated.Value(1),
   };
 
-  componentDidMount() {
-    Animated.timing(this.state.animation, {
-      toValue: 1,
-      duration: 4000,
-    }).start();
-  }
-  render() {
-    const boxStyle = {
-      backgroundColor: this.state.animation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ["rgba(255,99,71, 1)", "blue"],
+  handlePress = () => {
+    Animated.parallel([
+      Animated.timing(this.state.colorAnimation, {
+        toValue: 1,
+        duration: 500,
       }),
+
+      Animated.timing(this.state.scaleAnimation, {
+        toValue: 2,
+        duration: 300,
+      }),
+    ]).start(() => {
+      alert("Animation Complete");
+    });
+  };
+
+  render() {
+    const backgroundColorInterpolate = this.state.colorAnimation.interpolate({
+      inputRange: [0, 1],
+      outputRange: ["rgba(255,99,71, 1)", "blue"],
+    });
+
+    const boxStyle = {
+      backgroundColor: backgroundColorInterpolate,
+      transform: [{ scale: this.state.scaleAnimation }],
     };
 
     return (
       <View style={styles.container}>
-        <Animated.View style={[styles.box, boxStyle]}></Animated.View>
-        <Button title="click color change" onPress={this.StartAni}></Button>
+        <TouchableWithoutFeedback onPress={this.handlePress}>
+          <Animated.View style={[styles.box, boxStyle]}></Animated.View>
+        </TouchableWithoutFeedback>
       </View>
     );
   }
