@@ -9,17 +9,14 @@ const App = () => {
       onMoveShouldSetPanResponder: () => true,
       onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
       onPanResponderRelease: () => {
-        Animated.spring(pan, {
-          toValue: { x: 0, y: 0 },
-          useNativeDriver: true,
-        }).start();
+        pan.extractOffset(); //by using extractOffset the box is fixed in the position where we dragged it.
       },
     })
   ).current;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titleText}>Drag & Release this box!</Text>
+      <Text style={styles.titleText}>Drag this box!</Text>
       <Animated.View
         style={{ transform: [{ translateX: pan.x }, { translateY: pan.y }] }}
         {...panResponder.panHandlers}
