@@ -1,52 +1,35 @@
 import React, { Component } from "react";
-import {
-  AppRegistry,
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  Button,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { StyleSheet, View, Animated, ScrollView } from "react-native";
 
 export default class animations extends Component {
   state = {
-    colorAnimation: new Animated.Value(0),
-    scaleAnimation: new Animated.Value(1),
+    animation: new Animated.Value(0),
   };
-
-  handlePress = () => {
-    Animated.sequence([
-      Animated.timing(this.state.colorAnimation, {
-        toValue: 1,
-        duration: 500,
-      }),
-
-      Animated.timing(this.state.scaleAnimation, {
-        toValue: 2,
-        duration: 300,
-      }),
-    ]).start(() => {
-      alert("Animation Complete");
-    });
-  };
-
   render() {
-    const backgroundColorInterpolate = this.state.colorAnimation.interpolate({
-      inputRange: [0, 1],
-      outputRange: ["rgba(255,99,71, 1)", "blue"],
+    const backgroundInterpolate = this.state.animation.interpolate({
+      inputRange: [0, 3000],
+      outputRange: ["rgb(255,99,71)", "rgb(99,71,255)"],
     });
 
-    const boxStyle = {
-      backgroundColor: backgroundColorInterpolate,
-      transform: [{ scale: this.state.scaleAnimation }],
+    const backgroundStyle = {
+      backgroundColor: backgroundInterpolate,
     };
-
     return (
       <View style={styles.container}>
-        <TouchableWithoutFeedback onPress={this.handlePress}>
-          <Animated.View style={[styles.box, boxStyle]}></Animated.View>
-        </TouchableWithoutFeedback>
+        <ScrollView
+          scrollEventThrottle={16}
+          onScroll={Animated.event([
+            {
+              nativeEvent: {
+                contentOffset: {
+                  y: this.state.animation,
+                },
+              },
+            },
+          ])}
+        >
+          <Animated.View style={[styles.content, backgroundStyle]} />
+        </ScrollView>
       </View>
     );
   }
@@ -55,12 +38,8 @@ export default class animations extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
-  box: {
-    height: 100,
-    width: 100,
-    backgroundColor: "red",
+  content: {
+    height: 3000,
   },
 });
