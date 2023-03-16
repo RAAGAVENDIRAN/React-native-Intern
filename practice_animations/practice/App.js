@@ -1,43 +1,34 @@
-import React from "react";
-import {
-  NativeModules,
-  Button,
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  LayoutAnimation,
-} from "react-native";
-//Note that in order to get this to work on Android you need to set the following flags via UIManager:
-//UIManager.setLayoutAnimationEnabledExperimental(true);
+import React, { useRef } from "react";
+import { Animated, View, StyleSheet, Text, PanResponder } from "react-native";
 
-const { UIManager } = NativeModules;
+const App = () => {
+  const pan = useRef(new Animated.ValueXY()).current;
 
-UIManager.setLayoutAnimationEnabledExperimental &&
-  UIManager.setLayoutAnimationEnabledExperimental(true);
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
+      onPanResponderRelease: () => {
+        Animated.spring(pan, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: true,
+        }).start();
+      },
+    })
+  ).current;
 
-export default class App extends React.Component {
-  state = {
-    w: 40,
-    h: 40,
-  };
-
-  makeBigger = () => {
-    //Animate the update
-    LayoutAnimation.spring();
-    this.setState({ w: this.state.w + 15, h: this.state.h + 15 });
-  };
-  render() {
-    return (
-      <View style={styles.container}>
-        <View
-          style={[styles.box, { width: this.state.w, height: this.state.h }]}
-        />
-        <Button title="Grow Bigger" onPress={this.makeBigger} />
-      </View>
-    );
-  }
-}
+  return (
+    <View style={styles.container}>
+      <Text style={styles.titleText}>Drag & Release this box!</Text>
+      <Animated.View
+        style={{ transform: [{ translateX: pan.x }, { translateY: pan.y }] }}
+        {...panResponder.panHandlers}
+      >
+        <View style={styles.box} />
+      </Animated.View>
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -46,18 +37,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   box: {
-    width: 200,
-    height: 200,
+    height: 140,
+    width: 140,
     backgroundColor: "red",
   },
-  button: {
-    backgroundColor: "black",
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginTop: 15,
-  },
-  buttonText: {
-    color: "#fff",
+  titleText: {
+    fontSize: 14,
+    lineHeight: 24,
     fontWeight: "bold",
   },
 });
+
+export default App;
