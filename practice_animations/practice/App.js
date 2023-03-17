@@ -1,116 +1,90 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, Switch, Dimensions } from "react-native";
-
+import {
+  GestureHandlerRootView,
+  PinchGestureHandler,
+} from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
-  useAnimatedStyle,
-  withTiming,
   withSpring,
-  useDerivedValue,
-  withRepeat,
-  interpolateColor,
+  withTiming,
+  useAnimatedStyle,
   useAnimatedGestureHandler,
-  interpolate,
 } from "react-native-reanimated";
 
-const Colors = {
-  dark: {
-    background: "#1E1E1E",
-    circle: "#252525",
-    text: "#F8F8F8",
-  },
-  light: {
-    background: "#F8F8F8",
-    circle: "#FFF",
-    text: "#1E1E1E",
-  },
-};
+import { Image, StyleSheet, Dimensions } from "react-native";
 
-const SWITCH_TRACK_COLOR = {
-  true: "rgba(256,0,256,0.2)",
-  false: "rgba(0,0,0,0.1)",
-};
+const { width, height } = Dimensions.get("window");
+const imageUri =
+  "https://images.unsplash.com/photo-1678933964986-22090877ccf9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80";
+
+const AnimatedImage = Animated.createAnimatedComponent(Image); //creating image as animated to use inside pangesture handler
 
 export default function App() {
-  const [theme, setTheme] = useState("light");
+  const scale = useSharedValue(1);
+  const focalX = useSharedValue(0);
+  const focalY = useSharedValue(0);
 
-  // const progress = useSharedValue(0);
-
-  const progress = useDerivedValue(() => {
-    //Basically useDerived value return a shared value, but enable us to deal with some computation
-    return theme === "dark" ? withTiming(1) : withTiming(0); // inorder to make it smooth we are using withTiming
-  }, [theme]); // since our progress value is depends on theme, put theme in dependencies.
+  const Pinch = useAnimatedGestureHandler({
+    onActive: (event) => {
+      scale.value = event.scale;
+      focalX.value = event.focalX;
+      focalY.value = event.focalY;
+    },
+    onEnd: () => {
+      scale.value = withTiming(1);
+    },
+  });
 
   const rStyle = useAnimatedStyle(() => {
-    const backgroundColor = interpolateColor(
-      progress.value,
-      [0, 1],
-      [Colors.light.background, Colors.dark.background]
-    );
-    return { backgroundColor };
+    return {
+      transform: [
+        { translateX: focalX.value },
+        { translateY: focalY.value },
+        { translateX: -width / 2 },
+        { translateY: -height / 2 },
+        { scale: scale.value },
+
+        { translateX: -focalX.value },
+        { translateY: -focalY.value },
+        { translateX: width / 2 },
+        { translateY: height / 2 },
+      ],
+    };
   });
 
-  const rCircleStyle = useAnimatedStyle(() => {
-    const backgroundColor = interpolateColor(
-      progress.value,
-      [0, 1],
-      [Colors.light.circle, Colors.dark.circle]
-    );
-    return { backgroundColor };
-  });
+  //focal point is actally on the center of the image ,and the point where we actually to zoom with pinch effect , we wnat
+  // that the image scaling happens in the focal point so we nee dto actually to use a trick , we want ,
+  //that the scale happened with the focal point but we know that the scale  will always happen at the center of the image
+  //so in order to pinch in the correct way, we need to center the image we need we need to fix the center of th image with focal point always and
+  // after we need to scale when everything is done we need to reset back our translate values
 
-  const rTextStyle = useAnimatedStyle(() => {
-    const color = interpolateColor(
-      progress.value,
-      [0, 1],
-      [Colors.light.text, Colors.dark.text]
-    );
-    return { color };
+  //to align focal point at the center of the image we need to translateX and translateY with the half of the image height and the image width.
+  const focalPointStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: focalX.value }, { translateY: focalY.value }],
+    };
   });
-
   return (
-    <Animated.View style={[styles.container, rStyle]}>
-      <Animated.Text style={[styles.text, rTextStyle]}>THEME</Animated.Text>
-      <Animated.View style={[styles.circle, rCircleStyle]}>
-        <Switch
-          value={theme === "dark"}
-          onValueChange={(toggled) => setTheme(toggled ? "dark" : "light")}
-          trackColor={SWITCH_TRACK_COLOR}
-          thumbColor={"violet"}
-        />
-      </Animated.View>
-    </Animated.View>
+    //   //we are using gesture handler so we want to use Animated Image inside it. So above we want to create the image as amnimated
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PinchGestureHandler onGestureEvent={Pinch}>
+        <Animated.View style={{ flex: 1 }}>
+          <AnimatedImage
+            style={[{ flex: 1 }, rStyle]}
+            source={{ uri: imageUri }}
+          />
+          <Animated.View style={[StyleSheet.focalPoint, focalPointStyle]} />
+        </Animated.View>
+      </PinchGestureHandler>
+    </GestureHandlerRootView>
   );
 }
 
-const SIZE = Dimensions.get("window").width * 0.7;
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  circle: {
-    width: SIZE,
-    height: SIZE,
-    backgroundColor: "#FFF",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: SIZE / 2,
-    shado: {
-      width: 0,
-      height: 20,
-    },
-    shadowRadius: 10,
-    shadowOpacity: 0.1,
-    elevation: 0.8,
-  },
-  text: {
-    fontSize: 70,
-    textTransform: "uppercase",
-    fontWeight: 700,
-    letterSpacing: 14,
-    marginBottom: 35,
+  focalPoint: {
+    ...StyleSheet.absoluteFillObject,
+    width: 20,
+    height: 20,
+    backgroundColor: "blue",
+    borderRadius: 10,
   },
 });
