@@ -1,28 +1,24 @@
 import * as React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-function HomeScreen({ navigation }) {
+function HomeScreen() {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Home Screen</Text>
-      <Button
-        title="Go to Profile"
-        onPress={() =>
-          navigation.navigate("Profile", { name: "Custom profile header" })
-        }
-      />
     </View>
   );
 }
 
-function ProfileScreen({ navigation }) {
+function LogoTitle() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Profile screen</Text>
-      <Button title="Go back" onPress={() => navigation.goBack()} />
-    </View>
+    <Image
+      style={{ width: 50, height: 50 }}
+      source={{
+        uri: "https://reactnative.dev/img/tiny_logo.png",
+      }}
+    />
   );
 }
 
@@ -31,23 +27,11 @@ const Stack = createNativeStackNavigator();
 function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#f4511e",
-          },
-          headerTintColor: "#fff",
-        }}
-      >
+      <Stack.Navigator>
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: "My home" }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={({ route }) => ({ title: route.params.name })}
+          options={{ headerTitle: (props) => <LogoTitle {...props} /> }}
         />
       </Stack.Navigator>
     </NavigationContainer>
