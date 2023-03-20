@@ -9,16 +9,33 @@ function HomeScreen({ navigation }) {
       <Text>Home Screen</Text>
       <Button
         title="Go to Details"
-        onPress={() => navigation.navigate("Details")}
+        onPress={() => {
+          navigation.navigate("Details", {
+            itemId: 81,
+            texts: "Hi im from Home",
+          });
+        }}
       />
     </View>
   );
 }
 
-function DetailsScreen({ navigation }) {
+function DetailsScreen({ route, navigation }) {
+  4;
+  const { itemId, texts } = route.params;
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Details Screen</Text>
+      <Text>{itemId}</Text>
+      <Text>{texts}</Text>
+      <Button
+        onPress={() => {
+          navigation.push("Details", {
+            itemId: Math.floor(Math.random() * 100),
+          });
+        }}
+        title="Go to details agsin"
+      />
       <Button title="Go to Home" onPress={() => navigation.navigate("Home")} />
       <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
