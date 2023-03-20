@@ -1,38 +1,50 @@
-import * as React from 'react';
-import { Text, View, Button } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as React from "react";
+import { View, Text, Button } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-function HomeScreen({ route, navigation }) {
-  const { itemId } = route.params;
+function HomeScreen({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>Home Screen</Text>
-      <Text>itemId: {JSON.stringify(itemId)}</Text>
       <Button
-        title="Update param"
+        title="Go to Profile"
         onPress={() =>
-          navigation.setParams({
-            itemId: Math.floor(Math.random() * 100),
-          })
+          navigation.navigate("Profile", { name: "Custom profile header" })
         }
       />
     </View>
   );
 }
 
+function ProfileScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Profile screen</Text>
+      <Button title="Go back" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          initialParams={{ itemId: 42 }}
+          options={{ title: "My home" }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={({ route }) => ({ title: route.params.name })}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+export default App;
