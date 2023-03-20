@@ -1,58 +1,38 @@
-import * as React from "react";
-import { View, Text, Button } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as React from 'react';
+import { Text, View, Button } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ route, navigation }) {
+  const { itemId } = route.params;
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
       <Text>Home Screen</Text>
+      <Text>itemId: {JSON.stringify(itemId)}</Text>
       <Button
-        title="Go to Details"
-        onPress={() => {
-          navigation.navigate("Details", {
-            itemId: 81,
-            texts: "Hi im from Home",
-          });
-        }}
-      />
-    </View>
-  );
-}
-
-function DetailsScreen({ route, navigation }) {
-  4;
-  const { itemId, texts } = route.params;
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Details Screen</Text>
-      <Text>{itemId}</Text>
-      <Text>{texts}</Text>
-      <Button
-        onPress={() => {
-          navigation.push("Details", {
+        title="Update param"
+        onPress={() =>
+          navigation.setParams({
             itemId: Math.floor(Math.random() * 100),
-          });
-        }}
-        title="Go to details agsin"
+          })
+        }
       />
-      <Button title="Go to Home" onPress={() => navigation.navigate("Home")} />
-      <Button title="Go back" onPress={() => navigation.goBack()} />
     </View>
   );
 }
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          initialParams={{ itemId: 42 }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-export default App;
