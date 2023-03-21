@@ -2,61 +2,97 @@ import * as React from "react";
 import { Button, View, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-const Drawer = createDrawerNavigator();
-const Stack = createNativeStackNavigator();
-
-function ProfileScreen() {
-  return <View></View>;
-}
-
-function SettingsScreen({ route, navigation }) {
-  const { user } = route.params;
+function SettingsScreen({ navigation }) {
   return (
-    <View>
-      <Text>Welcome {user}</Text>
-
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Settings Screen</Text>
       <Button
-        title="go to Profile"
+        title="Go to Profile"
         onPress={() => navigation.navigate("Profile")}
       />
     </View>
   );
 }
 
-function Mine({ navigation }) {
+function ProfileScreen({ navigation }) {
+  React.useEffect(
+    () => {
+      const listener = navigation.addListener("focus", () => alert("Screen was focused"))
+
+      return listener;
+    },
+    []
+  );
+
+  React.useEffect(
+    () => navigation.addListener("blur", () => alert("Screen was unfocused")),
+    []
+  );
+
   return (
-    <View>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Profile Screen</Text>
       <Button
-        title="go to settings"
-        onPress={() => {
-          navigation.navigate("Root", {
-            screen: "Settings",
-            params: { user: "raaga" },
-          });
-        }}
+        title="Go to Settings"
+        onPress={() => navigation.navigate("Settings")}
       />
     </View>
   );
 }
 
-function Root() {
+function HomeScreen({ navigation }) {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
-    </Stack.Navigator>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Home Screen</Text>
+      <Button
+        title="Go to Details"
+        onPress={() => navigation.navigate("Details")}
+      />
+    </View>
   );
 }
+
+function DetailsScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Details Screen</Text>
+      <Button
+        title="Go to Details... again"
+        onPress={() => navigation.push("Details")}
+      />
+    </View>
+  );
+}
+const Tab = createBottomTabNavigator();
+const SettingsStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Drawer.Navigator>
-        <Drawer.Screen name="Root" component={Root} />
-        <Drawer.Screen name="Mine" component={Mine} />
-      </Drawer.Navigator>
+      <Tab.Navigator screenOptions={{ headerShown: false }}>
+        <Tab.Screen name="First">
+          {() => (
+            <SettingsStack.Navigator>
+              <SettingsStack.Screen
+                name="Settings"
+                component={SettingsScreen}
+              />
+              <SettingsStack.Screen name="Profile" component={ProfileScreen} />
+            </SettingsStack.Navigator>
+          )}
+        </Tab.Screen>
+        <Tab.Screen name="Second">
+          {() => (
+            <HomeStack.Navigator>
+              <HomeStack.Screen name="Home" component={HomeScreen} />
+              <HomeStack.Screen name="Details" component={DetailsScreen} />
+            </HomeStack.Navigator>
+          )}
+        </Tab.Screen>
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
