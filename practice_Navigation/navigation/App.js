@@ -1,81 +1,57 @@
-import * as React from "react";
-import { Text, View } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as React from 'react';
+import { Button, View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
-function Feed() {
+function EmptyScreen() {
+  return <View />;
+}
+
+function Feed({ navigation }) {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Feed!</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Feed Screen</Text>
+      <Button title="Go to Root" onPress={() => navigation.navigate('Root')} />
+      <Button
+        title="Go to Root, Profile"
+        onPress={() => navigation.navigate('Root', { screen: 'Profile' })}
+      />
     </View>
   );
 }
 
-function Profile() {
+function Home({ navigation }) {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Profile!</Text>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text>Home Screen</Text>
+      <Button title="Go to Feed" onPress={() => navigation.navigate('Feed')} />
     </View>
   );
 }
 
-function Notifications() {
+const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
+
+function Root() {
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Notifications!</Text>
-    </View>
+    <Drawer.Navigator useLegacyImplementation>
+      <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="Profile" component={EmptyScreen} />
+      <Stack.Screen name="Settings" component={EmptyScreen} />
+    </Drawer.Navigator>
   );
 }
 
-const Tab = createMaterialBottomTabNavigator();
-
-function MyTabs() {
-  return (
-    <Tab.Navigator
-      initialRouteName="Feed"
-      activeColor="#e91e63"
-      labelStyle={{ fontSize: 12 }}
-      style={{ backgroundColor: "blue" }}
-    >
-      <Tab.Screen
-        name="Feed"
-        component={Feed}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Notifications"
-        component={Notifications}
-        options={{
-          tabBarLabel: "Updates",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="bell" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Profile"
-        component={Profile}
-        options={{
-          tabBarLabel: "Profile",
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={26} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-}
-
-export default function App() {
+function App() {
   return (
     <NavigationContainer>
-      <MyTabs />
+      <Stack.Navigator>
+        <Stack.Screen name="Root" component={Root} />
+        <Stack.Screen name="Feed" component={Feed} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+export default App;
