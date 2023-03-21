@@ -1,78 +1,81 @@
 import * as React from "react";
-import { View, Text, Button, Image } from "react-native";
+import { Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-
-const Tab = createMaterialTopTabNavigator();
-
-const Stack = createNativeStackNavigator();
-
-function HomeScreen({ navigation }) {
+function Feed() {
   return (
-    <>
-      <Tab.Navigator>
-        <Tab.Screen name="Feed" component={Feed} />
-        <Tab.Screen name="Messages" component={Messages} />
-      </Tab.Navigator>
-    </>
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Feed!</Text>
+    </View>
   );
 }
-function LoginScreen({ navigation }) {
+
+function Profile() {
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Login Screen</Text>
-      <Button
-        title="Go to Settings"
-        onPress={() => navigation.navigate("settings")}
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Profile!</Text>
+    </View>
+  );
+}
+
+function Notifications() {
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Notifications!</Text>
+    </View>
+  );
+}
+
+const Tab = createMaterialBottomTabNavigator();
+
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Feed"
+      activeColor="#e91e63"
+      labelStyle={{ fontSize: 12 }}
+      style={{ backgroundColor: "blue" }}
+    >
+      <Tab.Screen
+        name="Feed"
+        component={Feed}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
       />
-    </View>
-  );
-}
-
-function Feed({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Login Screen</Text>
-      <Button
-        title="Go to Settings"
-        onPress={() => navigation.navigate("settings")}
+      <Tab.Screen
+        name="Notifications"
+        component={Notifications}
+        options={{
+          tabBarLabel: "Updates",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="bell" color={color} size={26} />
+          ),
+        }}
       />
-    </View>
-  );
-}
-
-function Messages({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Login Screen</Text>
-      <Button
-        title="Go to Login"
-        onPress={() => navigation.navigate("login")}
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarLabel: "Profile",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="account" color={color} size={26} />
+          ),
+        }}
       />
-    </View>
+    </Tab.Navigator>
   );
 }
 
-function Settings() {
-  return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Settings</Text>
-    </View>
-  );
-}
-
-function App() {
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="login" component={LoginScreen} />
-        <Stack.Screen name="settings" component={Settings} />
-      </Stack.Navigator>
+      <MyTabs />
     </NavigationContainer>
   );
 }
-
-export default App;
