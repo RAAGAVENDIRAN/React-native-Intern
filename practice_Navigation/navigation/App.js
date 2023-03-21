@@ -3,8 +3,10 @@ import { View, Text, Button, Image } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-const Tab = createBottomTabNavigator();
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+
+const Tab = createMaterialTopTabNavigator();
+
 const Stack = createNativeStackNavigator();
 
 function HomeScreen({ navigation }) {
