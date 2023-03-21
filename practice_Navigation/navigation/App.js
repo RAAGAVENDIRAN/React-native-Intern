@@ -1,57 +1,62 @@
-import * as React from 'react';
-import { Button, View, Text } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import * as React from "react";
+import { Button, View, Text } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 
-function EmptyScreen() {
-  return <View />;
+const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator();
+
+function ProfileScreen() {
+  return <View></View>;
 }
 
-function Feed({ navigation }) {
+function SettingsScreen({ route, navigation }) {
+  const { user } = route.params;
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Feed Screen</Text>
-      <Button title="Go to Root" onPress={() => navigation.navigate('Root')} />
+    <View>
+      <Text>Welcome {user}</Text>
+
       <Button
-        title="Go to Root, Profile"
-        onPress={() => navigation.navigate('Root', { screen: 'Profile' })}
+        title="go to Profile"
+        onPress={() => navigation.navigate("Profile")}
       />
     </View>
   );
 }
 
-function Home({ navigation }) {
+function Mine({ navigation }) {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button title="Go to Feed" onPress={() => navigation.navigate('Feed')} />
+    <View>
+      <Button
+        title="go to settings"
+        onPress={() => {
+          navigation.navigate("Root", {
+            screen: "Settings",
+            params: { user: "raaga" },
+          });
+        }}
+      />
     </View>
   );
 }
 
-const Drawer = createDrawerNavigator();
-const Stack = createNativeStackNavigator();
-
 function Root() {
   return (
-    <Drawer.Navigator useLegacyImplementation>
-      <Drawer.Screen name="Home" component={Home} />
-      <Drawer.Screen name="Profile" component={EmptyScreen} />
-      <Stack.Screen name="Settings" component={EmptyScreen} />
-    </Drawer.Navigator>
+    <Stack.Navigator>
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
+    </Stack.Navigator>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Root" component={Root} />
-        <Stack.Screen name="Feed" component={Feed} />
-      </Stack.Navigator>
+      <Drawer.Navigator>
+        <Drawer.Screen name="Root" component={Root} />
+        <Drawer.Screen name="Mine" component={Mine} />
+      </Drawer.Navigator>
     </NavigationContainer>
   );
 }
-
-export default App;
